@@ -20,7 +20,7 @@ public class PreviewActivity extends AppCompatActivity {
         start_button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                Intent start_intent = new Intent(v.getContext(), MapsActivity.class){};
+                Intent start_intent = new Intent(v.getContext(), MainActivity.class){};
                 startActivity(start_intent);
                 finish();
             }
