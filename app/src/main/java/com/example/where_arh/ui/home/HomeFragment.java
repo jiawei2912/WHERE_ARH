@@ -26,14 +26,11 @@ import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import static androidx.core.content.ContextCompat.getSystemService;
 
 public class HomeFragment extends Fragment
         implements GoogleMap.OnMyLocationButtonClickListener,
         GoogleMap.OnMyLocationClickListener,
         OnMapReadyCallback {
-
-
     @Override
     public void onMyLocationClick(@NonNull Location location) {
         Toast.makeText(this.getContext(), "Current location:\n" + location, Toast.LENGTH_LONG)
