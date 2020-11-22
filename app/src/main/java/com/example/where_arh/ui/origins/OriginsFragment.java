@@ -74,7 +74,6 @@ public class OriginsFragment extends Fragment {
 
         addOriginButton = nview.findViewById(R.id.add_origin_button);
         addOriginButton.setOnClickListener(new View.OnClickListener(){
-
             @Override
             public void onClick(View v) {
                 int id = OriginContent.ITEMS.size()+1;

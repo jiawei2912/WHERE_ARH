@@ -2,28 +2,29 @@
 
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <androidx.recyclerview.widget.RecyclerView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/list"
         android:name="com.example.where_arh.OriginsFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30sp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         app:layoutManager="LinearLayoutManager"
         tools:context="ui.origins.OriginsFragment"
-        tools:listitem="@layout/fragment_origins" >
-    </androidx.recyclerview.widget.RecyclerView>
+        tools:listitem="@layout/fragment_origins"></androidx.recyclerview.widget.RecyclerView>
 
     <Button
         android:id="@+id/add_origin_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="-50sp"
         android:layout_gravity="center"
         android:text="@string/add_origins_button_text" />
 
