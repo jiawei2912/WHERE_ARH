@@ -59,7 +59,7 @@ public class OriginsRecyclerViewAdapter extends RecyclerView.Adapter<OriginsRecy
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mIdView;
-        public final EditText mContentView;
+        public final TextView mContentView;
         public OriginContent.OriginItem mItem;
         public final Button deleteButton;
 
@@ -67,7 +67,7 @@ public class OriginsRecyclerViewAdapter extends RecyclerView.Adapter<OriginsRecy
             super(view);
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.item_number);
-            mContentView = (EditText) view.findViewById(R.id.content);
+            mContentView = (TextView) view.findViewById(R.id.content);
             deleteButton = view.findViewById(R.id.deleteButton);
         }
 

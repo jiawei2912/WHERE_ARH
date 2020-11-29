@@ -1,5 +1,7 @@
 package com.example.where_arh.ui.origins;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,23 +25,35 @@ public class OriginContent {
      */
     public static final Map<String, OriginItem> ITEM_MAP = new HashMap<String, OriginItem>();
 
-    private static final int COUNT = 2;
+    private static final int COUNT = 0;
 
     static {
         // Add some sample items.
         for (int i = 1; i <= COUNT; i++) {
-            addItem(createOriginItem(i));
+            addItem(createOriginItem(i, new LatLng(0,0)));
         }
     }
 
-    private static void addItem(OriginItem item) {
+    public static List<OriginItem> getItems(){
+        return ITEMS;
+    }
+
+    public static List<LatLng> getItemLatLngs(){
+        ArrayList<LatLng> coords = new ArrayList<>();
+        for (OriginItem o:ITEMS){
+            coords.add(o.coords);
+        }
+        return coords;
+    }
+
+    public static void addItem(OriginItem item) {
         ITEMS.add(item);
         ITEM_MAP.put(item.id, item);
     }
 
-    private static OriginItem createOriginItem(int position) {
+    private static OriginItem createOriginItem(int position, LatLng coords) {
 //        return new OriginItem(String.valueOf(position), "Item " + position, makeDetails(position));
-        return new OriginItem(String.valueOf(position), "Item " + position);
+        return new OriginItem(String.valueOf(position), "Item " + position, coords);
     }
 
 //    private static String makeDetails(int position) {
@@ -57,17 +71,12 @@ public class OriginContent {
     public static class OriginItem {
         public String id;
         public final String content;
-//        public final String details;
+        public final LatLng coords;
 
-//        public OriginItem(String id, String content, String details) {
-//            this.id = id;
-//            this.content = content;
-//            this.details = details;
-//        }
-
-        public OriginItem(String id, String content) {
+        public OriginItem(String id, String content, LatLng coords) {
             this.id = id;
             this.content = content;
+            this.coords = coords;
         }
 
         @Override
