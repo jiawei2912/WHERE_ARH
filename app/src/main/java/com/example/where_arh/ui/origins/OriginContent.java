@@ -1,6 +1,7 @@
 package com.example.where_arh.ui.origins;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.libraries.places.api.model.Place;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,6 +50,10 @@ public class OriginContent {
     public static void addItem(OriginItem item) {
         ITEMS.add(item);
         ITEM_MAP.put(item.id, item);
+    }
+
+    public static void clearItems(){
+        ITEMS.clear();
     }
 
     private static OriginItem createOriginItem(int position, LatLng coords) {
