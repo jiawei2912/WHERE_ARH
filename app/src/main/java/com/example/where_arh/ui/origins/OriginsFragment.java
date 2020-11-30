@@ -1,5 +1,6 @@
 package com.example.where_arh.ui.origins;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,18 +9,28 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import android.location.Location;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.where_arh.R;
 import com.example.where_arh.Util.Util;
+import com.example.where_arh.ui.home.HomeFragment;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
@@ -31,6 +42,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Executor;
 
 
 /**
@@ -42,8 +54,10 @@ public class OriginsFragment extends Fragment {
     private int mColumnCount = 1;
 
     //Widgets
-    ImageView addOriginButton;
-    private OriginContent origincontent;
+    private ImageView addOriginButton;
+    private Button originConfirmButton;
+    private NavController navcontroller;
+    private ImageButton addOwnLocationButton;
 
     //Preferences
     private SharedPreferences mPreferences;
@@ -111,6 +125,33 @@ public class OriginsFragment extends Fragment {
                 startAutocompleteActivity(v);
             }
         });
+
+        addOwnLocationButton = nview.findViewById(R.id.add_own_location_button);
+        addOwnLocationButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Location mylocation = getMyLocation();
+                if (mylocation == null){
+                    Toast errortoast = Toast.makeText(v.getContext(), "Error: Cannot find your location", Toast.LENGTH_LONG);
+                    errortoast.show();
+                }else{
+                    LatLng latlng = new LatLng(mylocation.getLatitude(), mylocation.getLongitude());
+                    OriginContent.deleteItemWithNameIfExists("Your Location");
+                    OriginContent.addItem("Your Location", latlng, true);
+                }
+            }
+        });
+
+        navcontroller = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
+        originConfirmButton = nview.findViewById(R.id.origins_confirm_button);
+        originConfirmButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                OriginContent.commitItems();
+                navcontroller.navigate(R.id.nav_home);
+            }
+        });
+
         //load saved origins
         mPreferences = this.getActivity().getSharedPreferences(sharedPrefFile, this.getActivity().MODE_PRIVATE);
         Set<String> location_ids = mPreferences.getStringSet("location_ids", null);
@@ -153,5 +194,23 @@ public class OriginsFragment extends Fragment {
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    //A bad idea - need to fix
+    @SuppressLint("MissingPermission")
+    public Location getMyLocation(){
+        FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this.getContext());
+        final Location[] mylocation = new Location[1];
+        fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this.getActivity(), new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            // Logic to handle location object
+                            mylocation[0] = location;
+                        }
+                    }
+                });
+        return mylocation[0];
     }
 }

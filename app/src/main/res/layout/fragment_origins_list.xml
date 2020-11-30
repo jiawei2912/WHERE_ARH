@@ -1,32 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical">
 
     <ImageView
         android:id="@+id/add_origin_button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="59sp"
         android:layout_gravity="center"
         android:src="@drawable/search_bar"
-        android:layout_marginTop="-10sp"
-        android:layout_marginBottom="-10sp"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"
         android:name="com.example.where_arh.OriginsFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_height="0dp"
         app:layoutManager="LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@+id/origins_confirm_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_origin_button"
         tools:context="ui.origins.OriginsFragment"
         tools:listitem="@layout/fragment_origins" />
 
+    <Button
+        android:id="@+id/origins_confirm_button"
+        android:layout_width="280sp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/origins_confirm_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
-</LinearLayout>
+    <ImageButton
+        android:id="@+id/add_own_location_button"
+        android:layout_width="60sp"
+        android:layout_height="50sp"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_menu_location"
+        app:layout_constraintBottom_toBottomOf="@+id/add_origin_button"
+        app:layout_constraintEnd_toEndOf="@+id/add_origin_button"
+        app:layout_constraintHorizontal_bias="0.97"
+        app:layout_constraintStart_toStartOf="@+id/add_origin_button"
+        app:layout_constraintTop_toTopOf="@+id/add_origin_button" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

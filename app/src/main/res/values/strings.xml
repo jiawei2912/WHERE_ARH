@@ -20,6 +20,8 @@
 
     <string name="origins_title">Origin Locations</string>
     <string name="add_origins_button_text">Add Location</string>
+    <string name="origins_confirm_button">Confirm </string>
+    <string name="add_own_location_button">Add own location</string>
 
     <!-- Preference Titles -->
     <string name="general_header">General Settings</string>

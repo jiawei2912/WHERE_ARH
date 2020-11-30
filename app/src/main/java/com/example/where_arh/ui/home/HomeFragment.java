@@ -6,8 +6,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.telephony.NeighboringCellInfo;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +16,14 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.example.where_arh.R;
 import com.example.where_arh.Util.Util;
 import com.example.where_arh.ui.origins.OriginContent;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -31,11 +33,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.model.Place;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Executor;
 
 
 public class HomeFragment extends Fragment
@@ -46,11 +50,12 @@ public class HomeFragment extends Fragment
     private SharedPreferences locationPreferences;
     private String locationsPrefFile = "com.example.where_arh.origins.locations_info";
     private List<Place> places;
+    private FloatingActionButton to_origins_fab;
+    private NavController navcontroller;
 
     @Override
     public void onCreate(Bundle SavedInstance) {
         super.onCreate(SavedInstance);
-
     }
 
     @Override
@@ -59,9 +64,10 @@ public class HomeFragment extends Fragment
         locationPreferences = this.getActivity().getSharedPreferences(locationsPrefFile, this.getActivity().MODE_PRIVATE);
         Set<String> location_ids = locationPreferences.getStringSet("location_ids", null);
         if (!OriginContent.isEmpty()){
-            this.places = OriginContent.getItemsAsPlaces();
-        }else if(location_ids != null){
+            this.places = OriginContent.getComittedItemsAsPlaces();
+        }else if(location_ids != null  && !OriginContent.isIntentionallyEmpty()){
             this.places = Util.readOriginsFromPreferencesAsPlaces(locationPreferences);
+            OriginContent.setPlacesAsComittedItems(this.places);
         }
     }
 
@@ -81,12 +87,22 @@ public class HomeFragment extends Fragment
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
+        navcontroller = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
+        to_origins_fab = getActivity().findViewById(R.id.to_origins_fab);
+        to_origins_fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+                navcontroller.navigate(R.id.nav_origins);
+            }
+        });
     }
 
     //MAP STUFF
     private final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private boolean locationPermissionGranted = true;
-    private GoogleMap mMap;
+    private static GoogleMap mMap;
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -106,7 +122,7 @@ public class HomeFragment extends Fragment
         map.setMapType(1);
         map.moveCamera(CameraUpdateFactory.zoomTo(10));
         UiSettings uisettings = map.getUiSettings();
-        uisettings.setZoomControlsEnabled(true);
+//        uisettings.setZoomControlsEnabled(true);
         uisettings.setCompassEnabled(true);
         //MY LOCATION
         // LocationManager - to ask for location updates
@@ -129,7 +145,7 @@ public class HomeFragment extends Fragment
             for(Place place:places){
                 mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title(place.getName()));
             }
-            latlnglist = OriginContent.getItemAsLatLngs();
+            latlnglist = OriginContent.getComittedItemAsLatLngs();
         }
         //Find Center
         if(latlnglist!= null && !latlnglist.isEmpty()){
