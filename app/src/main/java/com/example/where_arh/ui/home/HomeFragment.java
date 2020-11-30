@@ -6,11 +6,11 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.telephony.NeighboringCellInfo;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebStorage;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -20,8 +20,8 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.where_arh.R;
+import com.example.where_arh.Util.Util;
 import com.example.where_arh.ui.origins.OriginContent;
-import com.example.where_arh.ui.origins.OriginsFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -46,7 +46,6 @@ public class HomeFragment extends Fragment
     private SharedPreferences locationPreferences;
     private String locationsPrefFile = "com.example.where_arh.origins.locations_info";
     private List<Place> places;
-    private List<LatLng> latlnglist;
 
     @Override
     public void onCreate(Bundle SavedInstance) {
@@ -57,40 +56,13 @@ public class HomeFragment extends Fragment
     @Override
     public void onResume(){
         super.onResume();
-
-        List<OriginContent.OriginItem> place_items = OriginContent.getItems();
-        List<Place> places = new ArrayList<>();
-        if (!place_items.isEmpty()){
-            for (OriginContent.OriginItem o:place_items){
-                Place.Builder place_builder = Place.builder();
-                place_builder.setName(o.content);
-                place_builder.setLatLng(o.coords);
-                Place place = place_builder.build();
-                places.add(place);
-            }
-            this.places = places;
-            this.latlnglist = OriginContent.getItemLatLngs();
-            Log.d("TAG", "places obtained");
-        }else{
-            locationPreferences = this.getActivity().getSharedPreferences(locationsPrefFile, this.getActivity().MODE_PRIVATE);
-            Set<String> location_ids = locationPreferences.getStringSet("location_ids", null);
-            if (location_ids != null){
-                List<LatLng> latLngList = new ArrayList<>();
-                for (String id:location_ids){
-                    LatLng latlng = new LatLng(Double.parseDouble(locationPreferences.getString(id+"_lat","0")),  Double.parseDouble(locationPreferences.getString(id+"_lng","0")));
-                    latLngList.add(latlng);
-                    Place.Builder place_builder = Place.builder();
-                    place_builder.setName(locationPreferences.getString(id+"_name",""));
-                    place_builder.setLatLng(latlng);
-                    Place place = place_builder.build();
-                    places.add(place);
-                }
-                this.places = places;
-                this.latlnglist = latLngList;
-                Log.d("TAG", "I RAN");
-            }
+        locationPreferences = this.getActivity().getSharedPreferences(locationsPrefFile, this.getActivity().MODE_PRIVATE);
+        Set<String> location_ids = locationPreferences.getStringSet("location_ids", null);
+        if (!OriginContent.isEmpty()){
+            this.places = OriginContent.getItemsAsPlaces();
+        }else if(location_ids != null){
+            this.places = Util.readOriginsFromPreferencesAsPlaces(locationPreferences);
         }
-
     }
 
     @Nullable
@@ -149,6 +121,7 @@ public class HomeFragment extends Fragment
             mMap.setOnMyLocationClickListener(this);
         }
         //load markers
+        List<LatLng> latlnglist = null;
         if (places != null && places.isEmpty()){
             mMap.clear();
         }
@@ -156,6 +129,7 @@ public class HomeFragment extends Fragment
             for(Place place:places){
                 mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title(place.getName()));
             }
+            latlnglist = OriginContent.getItemAsLatLngs();
         }
         //Find Center
         if(latlnglist!= null && !latlnglist.isEmpty()){
