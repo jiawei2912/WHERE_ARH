@@ -9,7 +9,7 @@ public class HelpViewModel extends ViewModel{
 
     public HelpViewModel(){
         mText = new MutableLiveData<>();
-        mText.setValue("This is help.");
+        mText.setValue("This app can help user find a centred meeting spot in Singapore :)");
     }
 
     public LiveData<String> getText(){return mText;}
