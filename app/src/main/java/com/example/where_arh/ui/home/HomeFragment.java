@@ -39,6 +39,9 @@ import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.maps.GeoApiContext;
+import com.google.maps.NearbySearchRequest;
+import com.google.maps.model.PlacesSearchResult;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -199,7 +202,6 @@ public class HomeFragment extends Fragment
                     safety = 100000;
                 }
                 while(safety > 0){
-                    Log.d("TAG", String.valueOf(safety));
                     //check exit_condition - if there are any latlngs left to try moving towards
                     if (working_latlnglist.isEmpty()){
                         //if none left to try, stop algorithm
@@ -243,12 +245,11 @@ public class HomeFragment extends Fragment
                     polygon.setFillColor(0x7F00FF00);
                     polygon.setStrokeColor(0x7F00FF00);
                 }
-
-
             }
-
-
         }
+
+
+
 
 
     }
@@ -311,4 +312,5 @@ public class HomeFragment extends Fragment
             }
         });
     }
+
 }
