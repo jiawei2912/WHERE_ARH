@@ -17,22 +17,18 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/Type_header">
+    <PreferenceCategory app:title="@string/Search_Settings_Header">
 
         <SwitchPreferenceCompat
-            app:key="daryl"
-            app:title="@string/daryl_title" />
+            app:key="ml_algo"
+            app:title="@string/Search_Algorithm" />
 
         <SwitchPreferenceCompat
-            app:dependency="daryl"
-            app:key="attachment"
-            app:summaryOff="@string/attachment_summary_off"
-            app:summaryOn="@string/attachment_summary_on"
+            app:dependency="ml_algo"
+            app:key="ml_algo_attachment"
+            app:summary="@string/attachment_summary"
             app:title="@string/attachment_title" />
 
     </PreferenceCategory>
-
-
-
 
 </PreferenceScreen>

@@ -25,16 +25,18 @@
 
     <!-- Preference Titles -->
     <string name="general_header">General Settings</string>
-    <string name="Type_header">Lunch Settings</string>
+    <string name="Search_Settings_Header">Search Settings</string>
 
     <!-- Messages Preferences -->
     <string name="username_title">Your username</string>
     <string name="some_setting_title">Some setting</string>
 
     <!-- Sync Preferences -->
-    <string name="daryl_title">Does Daryl have a boyfriend today?</string>
-    <string name="attachment_title">Have lunch with Daryl?</string>
-    <string name="attachment_summary_on">Will lunch with Daryl
+    <string name="Search_Algorithm">Use unweighted search algorithm</string>
+    <string name="attachment_title">Increased Max Iterations</string>
+    <string name="attachment_summary">
+        Turning this on increases the maximum number of iterations the unweighted search
+        algorithm can perform to find a center location.
+        Warning: Turning this on this may result in slowdown on some older devices.
     </string>
-    <string name="attachment_summary_off">Cannot lunch with Daryl when his boyfriend is over</string>
 </resources>

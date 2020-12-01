@@ -2,6 +2,7 @@ package com.example.where_arh.ui.home;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -19,6 +20,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.preference.PreferenceManager;
 
 import com.example.where_arh.R;
 import com.example.where_arh.Util.Util;
@@ -38,6 +40,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executor;
@@ -49,6 +53,7 @@ public class HomeFragment extends Fragment
         OnMapReadyCallback {
 
     private SharedPreferences locationPreferences;
+    private SharedPreferences mPreferences;
     private String locationsPrefFile = "com.example.where_arh.origins.locations_info";
     private List<Place> places;
     private FloatingActionButton to_origins_fab;
@@ -149,32 +154,102 @@ public class HomeFragment extends Fragment
             latlnglist = OriginContent.getComittedItemAsLatLngs();
         }
         //Find Center
-        if(latlnglist!= null && !latlnglist.isEmpty()){
-            // Calculated centre point
-            double centerlat = 0;
-            double centerlng = 0;
-            for(LatLng latLng:latlnglist){
-                centerlat += latLng.latitude;
-                centerlng += latLng.longitude;
-            }
-            centerlat = centerlat/latlnglist.size();
-            centerlng = centerlng/latlnglist.size();
-            LatLng centre = new LatLng(centerlat, centerlng);
-            mMap.addMarker(new MarkerOptions().position(centre).title("Center"));
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        boolean unweighted_algorithm = mPreferences.getBoolean("ml_algo", false);
+        if (!unweighted_algorithm){
+            if(latlnglist!= null && !latlnglist.isEmpty()){
+                // Calculated centre point
+                double centerlat = 0;
+                double centerlng = 0;
+                for(LatLng latLng:latlnglist){
+                    centerlat += latLng.latitude;
+                    centerlng += latLng.longitude;
+                }
+                centerlat = centerlat/latlnglist.size();
+                centerlng = centerlng/latlnglist.size();
+                LatLng centre = new LatLng(centerlat, centerlng);
+                mMap.addMarker(new MarkerOptions().position(centre).title("Center"));
 
-            // Change v to set the amount to zoom
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(centre,14));
+                // Change v to set the amount to zoom
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(centre,14));
 
-            for (int i = 0; i < latlnglist.size(); i++){
-                PolygonOptions polygonOptions = new PolygonOptions().add(centre);
-                polygonOptions.add(latlnglist.get(i));
-                Polygon polygon = mMap.addPolygon(polygonOptions);
-                // Colours specified by hex digits A(FF), R(00), G(FF), B(00)
-                // To make it translucent, divide alpha channel by 2
-                polygon.setFillColor(0x7F00FF00);
-                polygon.setStrokeColor(0x7F00FF00);
+                for (int i = 0; i < latlnglist.size(); i++){
+                    PolygonOptions polygonOptions = new PolygonOptions().add(centre);
+                    polygonOptions.add(latlnglist.get(i));
+                    Polygon polygon = mMap.addPolygon(polygonOptions);
+                    // Colours specified by hex digits A(FF), R(00), G(FF), B(00)
+                    // To make it translucent, divide alpha channel by 2
+                    polygon.setFillColor(0x7F00FF00);
+                    polygon.setStrokeColor(0x7F00FF00);
+                }
             }
+        }else{
+            //MACHINE LEARNING
+            if(latlnglist!= null && latlnglist.size() > 1){
+                //Parameters
+                double step_size = 0.00001;
+
+                //Initial point
+                LatLng current_centre = Util.getCenterLatLng(latlnglist);
+
+                //Main Loop of algorithm
+                int safety = 1000;
+                List<LatLng> working_latlnglist = new ArrayList<>(latlnglist);
+                if (mPreferences.getBoolean("ml_algo_attachment", false)){
+                    safety = 100000;
+                }
+                while(safety > 0){
+                    Log.d("TAG", String.valueOf(safety));
+                    //check exit_condition - if there are any latlngs left to try moving towards
+                    if (working_latlnglist.isEmpty()){
+                        //if none left to try, stop algorithm
+                        break;
+                    }
+
+                    //cost = (average distance - distance_i)^2
+                    double current_iter_cost = Util.getCost(latlnglist, current_centre);
+
+                    //Get random latlang for SGD and remove it from the working list
+                    LatLng target_latlng = Util.getRandomLatLng(working_latlnglist);
+                    working_latlnglist.remove(target_latlng);
+
+                    //use SGD - Move center toward target latlng
+                    double new_lat = current_centre.latitude + step_size*target_latlng.latitude;
+                    double new_long = current_centre.longitude + step_size*target_latlng.longitude;
+                    LatLng proposed_new_centre = new LatLng(new_lat, new_long);
+
+                    //get cost with proposed new center and update center if new cost is lower
+                    double new_cost = Util.getCost(latlnglist, proposed_new_centre);
+                    if (new_cost < current_iter_cost){
+                        current_centre = proposed_new_centre;
+                        //refresh working latlnglist each time center is updated
+                        working_latlnglist = new ArrayList<>(latlnglist);
+                    }
+                    step_size = step_size*0.95;
+                    safety = safety - 1;
+                }
+
+                LatLng centre = current_centre;
+                mMap.addMarker(new MarkerOptions().position(centre).title("Center"));
+                // Change v to set the amount to zoom
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(centre,14));
+
+                for (int i = 0; i < latlnglist.size(); i++){
+                    PolygonOptions polygonOptions = new PolygonOptions().add(centre);
+                    polygonOptions.add(latlnglist.get(i));
+                    Polygon polygon = mMap.addPolygon(polygonOptions);
+                    // Colours specified by hex digits A(FF), R(00), G(FF), B(00)
+                    // To make it translucent, divide alpha channel by 2
+                    polygon.setFillColor(0x7F00FF00);
+                    polygon.setStrokeColor(0x7F00FF00);
+                }
+
+
+            }
+
+
         }
+
 
     }
     //Handles Perms
