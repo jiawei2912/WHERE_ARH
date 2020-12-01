@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -210,5 +211,29 @@ public class HomeFragment extends Fragment
         // Return false so that we don't consume the event and the default behavior still occurs
         // (the camera animates to the user's current position).
         return false;
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        updateMyPlace();
+    }
+
+    private Place.Builder PLACE_BUILDER;
+    //A bad idea - need to fix
+    @SuppressLint("MissingPermission")
+    public void updateMyPlace(){
+        PLACE_BUILDER = Place.builder();
+        FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this.getActivity());
+        fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this.getActivity(), new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if (location != null) {
+                    PLACE_BUILDER.setName("Your Location");
+                    PLACE_BUILDER.setLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
+                    OriginContent.setMyPlace(PLACE_BUILDER.build());
+                }
+            }
+        });
     }
 }

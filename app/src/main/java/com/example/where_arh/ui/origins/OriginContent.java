@@ -163,6 +163,15 @@ public class OriginContent {
         }
     }
 
+    //Store myplace
+    private static Place MYPLACE = null;
+    public static Place getMyplace(){
+        return MYPLACE;
+    }
+    public static void setMyPlace(Place myplace){
+        MYPLACE = myplace;
+    }
+
     //Some version of observer-subscriber dp
     public static void addViewAdapter(OriginsRecyclerViewAdapter va){
         OBSERVERS.add(va);
