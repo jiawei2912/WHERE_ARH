@@ -39,6 +39,9 @@ public class NearbySearch {
         PlacesSearchResponse psr = run(center, radius, api_key, placetype, keyword);
         List<PlacesSearchResult> nearby_locations = new ArrayList<>();
         PlacesSearchResult[] results = psr.results;
+        if (results == null){
+            return nearby_locations;
+        }
         for (PlacesSearchResult result:results){
             nearby_locations.add(result);
         }

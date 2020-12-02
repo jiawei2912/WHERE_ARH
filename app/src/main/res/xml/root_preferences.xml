@@ -1,23 +1,34 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <PreferenceCategory app:title="@string/general_header">
+<!--    <PreferenceCategory app:title="@string/general_header">-->
 
-        <EditTextPreference
-            app:key="Username"
-            app:title="@string/username_title"
-            app:useSimpleSummaryProvider="true" />
+<!--        <EditTextPreference-->
+<!--            app:key="Username"-->
+<!--            app:title="@string/username_title"-->
+<!--            app:useSimpleSummaryProvider="true" />-->
 
-        <ListPreference
-            app:defaultValue="Option 1"
-            app:entries="@array/some_setting_entries"
-            app:entryValues="@array/some_setting_values"
-            app:key="some_setting"
-            app:title="@string/some_setting_title"
-            app:useSimpleSummaryProvider="true" />
+<!--        <ListPreference-->
+<!--            app:defaultValue="Option 1"-->
+<!--            app:entries="@array/some_setting_entries"-->
+<!--            app:entryValues="@array/some_setting_values"-->
+<!--            app:key="some_setting"-->
+<!--            app:title="@string/some_setting_title"-->
+<!--            app:useSimpleSummaryProvider="true" />-->
 
-    </PreferenceCategory>
+<!--    </PreferenceCategory>-->
 
     <PreferenceCategory app:title="@string/Search_Settings_Header">
+
+        <EditTextPreference
+            app:key="search radius"
+            app:title="@string/search_radius"
+            app:useSimpleSummaryProvider="true"
+            android:digits="0123456789"
+
+            />
+
 
         <SwitchPreferenceCompat
             app:key="ml_algo"

@@ -8,8 +8,8 @@
     <string name="title_activity_main">Whr?</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Username</string>
-    <string name="nav_header_subtitle">Optional Info</string>
+    <string name="nav_header_title">Where_arh?</string>
+    <string name="nav_header_subtitle">----------------</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_about">About</string>
 
@@ -23,6 +23,10 @@
     <string name="origins_confirm_button">Confirm </string>
     <string name="add_own_location_button">Add own location</string>
 
+    <string name="here_lor">Click here lor!</string>
+    <string name="suggested_locations_category">Category: </string>
+    <string name="suggested_locations_keyword">Search: </string>
+
     <!-- Preference Titles -->
     <string name="general_header">General Settings</string>
     <string name="Search_Settings_Header">Search Settings</string>
@@ -30,6 +34,7 @@
     <!-- Messages Preferences -->
     <string name="username_title">Your username</string>
     <string name="some_setting_title">Some setting</string>
+    <string name="search_radius">Search Radius</string>
 
     <!-- Sync Preferences -->
     <string name="Search_Algorithm">Use unweighted search algorithm</string>

@@ -176,8 +176,8 @@ public class HomeFragment extends Fragment
             centre = centerfinder.getCenter(latlnglist);
         }
         if (centre != null){
-            mMap.addMarker(new MarkerOptions().position(centre).title("Click Me!")
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
+            mMap.addMarker(new MarkerOptions().position(centre).title(getResources().getString(R.string.here_lor))
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))).showInfoWindow();
             // Change v to set the amount to zoom
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(centre,14));
             for (int i = 0; i < latlnglist.size(); i++){
@@ -194,7 +194,7 @@ public class HomeFragment extends Fragment
             mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(Marker marker) {
-                    if(!marker.getTitle().equals("Click Me!")){
+                    if(!marker.getTitle().equals(getResources().getString(R.string.here_lor))){
 
                     }else{
                         if(Integer.parseInt(android.os.Build.VERSION.SDK) > 30){
