@@ -57,9 +57,9 @@ public class OriginsRecyclerViewAdapter extends RecyclerView.Adapter<OriginsRecy
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
+        public OriginContent.OriginItem item;
         public final TextView itemIdView;
         public final TextView itemContentView;
-        public OriginContent.OriginItem item;
         public final Button itemDeleteButton;
 
         public ViewHolder(View view) {

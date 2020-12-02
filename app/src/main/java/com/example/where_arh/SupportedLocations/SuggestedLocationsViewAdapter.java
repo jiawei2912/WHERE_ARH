@@ -1,6 +1,5 @@
-package com.example.where_arh;
+package com.example.where_arh.SupportedLocations;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,8 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.where_arh.ui.origins.OriginContent;
-import com.example.where_arh.ui.origins.OriginsRecyclerViewAdapter;
+import com.example.where_arh.R;
 
 import java.util.List;
 
@@ -38,8 +36,9 @@ public class SuggestedLocationsViewAdapter extends RecyclerView.Adapter<Suggeste
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.item = ITEMS.get(position);
-        holder.itemContentView.setText(ITEMS.get(position).name);
-        holder.goButton.setText("->");
+        holder.itemAddressNameView.setText(ITEMS.get(position).name);
+        holder.itemAddressView.setText(ITEMS.get(position).address);
+        holder.goButton.setText("Go");
         holder.goButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,20 +60,22 @@ public class SuggestedLocationsViewAdapter extends RecyclerView.Adapter<Suggeste
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView itemContentView;
         public SuggestedLocationsContent.SuggestedLocationsItem item;
+        public final TextView itemAddressNameView;
+        public final TextView itemAddressView;
         public final Button goButton;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            itemContentView = (TextView) view.findViewById(R.id.suggested_location_content);
+            itemAddressNameView = (TextView) view.findViewById(R.id.suggested_location_name);
+            itemAddressView = (TextView) view.findViewById(R.id.suggested_location_address);
             goButton = view.findViewById(R.id.goButton);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + itemContentView.getText() + "'";
+            return super.toString() + " '" + itemAddressNameView.getText() + "'";
         }
     }
 }

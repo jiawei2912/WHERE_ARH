@@ -1,10 +1,8 @@
-package com.example.where_arh;
+package com.example.where_arh.SupportedLocations;
 
 import android.util.Log;
 
-import com.example.where_arh.ui.origins.OriginContent;
-import com.example.where_arh.ui.origins.OriginsRecyclerViewAdapter;
-import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.model.PlacesSearchResult;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,6 +27,18 @@ public class SuggestedLocationsContent {
         addItem(item, false);
     }
     public static void addItem(SuggestedLocationsItem item, boolean notify) {
+        ITEMS.add(item);
+        ITEM_MAP.put(item.id, item);
+        if (notify){
+            notifyViewAdapters();
+        }
+    }
+    public static void addPlacesSearchResult(PlacesSearchResult psr){
+        SuggestedLocationsItem item = new SuggestedLocationsItem(String.valueOf(ITEMS.size()+1), psr.name, psr.formattedAddress, psr.placeId);
+        addPlacesSearchResult(psr, false);
+    }
+    public static void addPlacesSearchResult(PlacesSearchResult psr, boolean notify){
+        SuggestedLocationsItem item = new SuggestedLocationsItem(String.valueOf(ITEMS.size()+1), psr.name, psr.vicinity, psr.placeId);
         ITEMS.add(item);
         ITEM_MAP.put(item.id, item);
         if (notify){
@@ -78,9 +88,13 @@ public class SuggestedLocationsContent {
     public static class SuggestedLocationsItem{
         public String id;
         public final String name;
-        public SuggestedLocationsItem(String id, String name) {
+        public final String address;
+        public final String address_id;
+        public SuggestedLocationsItem(String id, String name, String address, String address_id) {
             this.id = id;
             this.name = name;
+            this.address = address;
+            this.address_id = address_id;
         }
         @Override
         public String toString() {

@@ -22,6 +22,7 @@ import androidx.navigation.Navigation;
 import androidx.preference.PreferenceManager;
 
 import com.example.where_arh.R;
+import com.example.where_arh.SupportedLocations.SuggestedLocationsActivity;
 import com.example.where_arh.Util.Util;
 import com.example.where_arh.ui.origins.OriginContent;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -175,7 +176,7 @@ public class HomeFragment extends Fragment
             centre = centerfinder.getCenter(latlnglist);
         }
         if (centre != null){
-            mMap.addMarker(new MarkerOptions().position(centre).title("Center")
+            mMap.addMarker(new MarkerOptions().position(centre).title("Click Me!")
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
             // Change v to set the amount to zoom
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(centre,14));
@@ -189,22 +190,21 @@ public class HomeFragment extends Fragment
                 polygon.setStrokeColor(0x7F00FF00);
             }
             //marker onclick
-            com.google.maps.model.LatLng finalCentre = new com.google.maps.model.LatLng(centre.latitude, centre.longitude);
-
+            LatLng finalCentre = centre;
             mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(Marker marker) {
-                    if(!marker.getTitle().equals("Center")){
+                    if(!marker.getTitle().equals("Click Me!")){
 
                     }else{
                         if(Integer.parseInt(android.os.Build.VERSION.SDK) > 30){
                             Toast errtoast = Toast.makeText(getContext(), "API Level 30 not yet supported.", Toast.LENGTH_SHORT);
                             //NearbySearch is currently not compatible with SDK version 30
                         }else{
-                            PlacesSearchResponse psr = NearbySearch.run(finalCentre, 1000, getResources().getString(R.string.google_maps_key));
-                            PlacesSearchResult[] results = psr.results;
-                            Intent to_suggested_locations = new Intent();
-                            to_suggested_locations.putExtra("psr", psr);
+                            Intent intent = new Intent(getActivity(), SuggestedLocationsActivity.class);
+                            intent.putExtra("center_lat", finalCentre.latitude);
+                            intent.putExtra("center_lng", finalCentre.longitude);
+                            startActivity(intent);
                         }
                     }
 

@@ -6,12 +6,41 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <Spinner
+        android:id="@+id/input_category"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="category"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/textView4"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/input_keyword"
+        android:layout_width="200sp"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Search: " />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/suggested_locations_list"
         android:name="com.example.where_arh.SuggestedLocationsActivity"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context="SuggestedLocationsActivity"
+        android:layout_height="100dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/input_category"
+        tools:context="SupportedLocations.SuggestedLocationsActivity"
         tools:listitem="@layout/activity_suggested_locations_item" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
