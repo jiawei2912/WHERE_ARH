@@ -1,5 +1,6 @@
 package com.example.where_arh.ui.home;
 
+import com.example.where_arh.R;
 import com.google.android.gms.common.api.ApiException;
 import com.google.maps.GeoApiContext;
 import com.google.maps.PlacesApi;
@@ -11,18 +12,16 @@ import com.google.maps.model.RankBy;
 import java.io.IOException;
 
 public class NearbySearch {
-    public PlacesSearchResponse run(){
+    public static PlacesSearchResponse run(LatLng center, int radius, String api_key){
         PlacesSearchResponse request = new PlacesSearchResponse();
         GeoApiContext context = new GeoApiContext.Builder()
-                .apiKey("MY_KEY")
+                .apiKey(api_key)
                 .build();
-        LatLng location = new LatLng(-33.8670522, 151.1957362);
-
         try {
-            request = PlacesApi.nearbySearchQuery(context, location)
-                    .radius(5000)
+            request = PlacesApi.nearbySearchQuery(context, center)
+                    .radius(radius)
                     .rankby(RankBy.PROMINENCE)
-                    .keyword("cruise")
+                    .keyword("food")
                     .language("en")
                     .type(PlaceType.RESTAURANT)
                     .await();

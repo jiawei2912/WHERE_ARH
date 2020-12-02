@@ -34,6 +34,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
@@ -42,6 +43,7 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.maps.GeoApiContext;
 import com.google.maps.NearbySearchRequest;
+import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
 
 import java.lang.reflect.Array;
@@ -161,9 +163,9 @@ public class HomeFragment extends Fragment
         mPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         boolean unweighted_algorithm = mPreferences.getBoolean("ml_algo", false);
         LatLng centre = null;
-        if (!unweighted_algorithm){
+        if (!unweighted_algorithm && latlnglist != null && latlnglist.size()>1 ){
             centre = CenterFinder.getCartesianCenter(latlnglist);
-        }else{
+        }else if(latlnglist != null && latlnglist.size()>1 ){
             centre = CenterFinder.getUnweightedCenter(latlnglist, mPreferences.getBoolean("ml_algo_unlocksafety", false));
         }
         if (centre != null){
@@ -180,7 +182,29 @@ public class HomeFragment extends Fragment
                 polygon.setFillColor(0x7F00FF00);
                 polygon.setStrokeColor(0x7F00FF00);
             }
+            //marker onclick
+            com.google.maps.model.LatLng finalCentre = new com.google.maps.model.LatLng(centre.latitude, centre.longitude);
+
+            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    if(!marker.getTitle().equals("Center")){
+
+                    }else{
+                        PlacesSearchResponse psr = NearbySearch.run(finalCentre, 1000, getResources().getString(R.string.google_maps_key));
+                        PlacesSearchResult[] results = psr.results;
+                        Log.d("TAG", results[0].toString());
+                        Log.d("TAG", finalCentre.toString());
+
+                    }
+
+                    return false;
+                }
+            });
         }
+
+
+
     }
     //Handles Perms
     @SuppressLint("MissingPermission")
