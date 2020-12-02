@@ -2,15 +2,11 @@ package com.example.where_arh.ui.home;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
-import android.security.keystore.UserNotAuthenticatedException;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,16 +40,11 @@ import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.maps.GeoApiContext;
-import com.google.maps.NearbySearchRequest;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Executor;
 
 
 public class HomeFragment extends Fragment
@@ -61,9 +52,9 @@ public class HomeFragment extends Fragment
         GoogleMap.OnMyLocationClickListener,
         OnMapReadyCallback {
 
-    private SharedPreferences locationPreferences;
-    private SharedPreferences mPreferences;
-    private String locationsPrefFile = "com.example.where_arh.origins.locations_info";
+    private SharedPreferences mainPreferences;
+    private SharedPreferences homePreferences;
+    private String homePrefFile = "com.example.where_arh.home.marker_info";
     private List<Place> places;
     private FloatingActionButton to_origins_fab;
     private NavController navcontroller;
@@ -77,14 +68,22 @@ public class HomeFragment extends Fragment
     @Override
     public void onResume(){
         super.onResume();
-        locationPreferences = this.getActivity().getSharedPreferences(locationsPrefFile, this.getActivity().MODE_PRIVATE);
-        Set<String> location_ids = locationPreferences.getStringSet("location_ids", null);
+        homePreferences = this.getActivity().getSharedPreferences(homePrefFile, this.getActivity().MODE_PRIVATE);
+        Set<String> location_ids = homePreferences.getStringSet("location_ids", null);
         if (!OriginContent.isEmpty()){
             this.places = OriginContent.getComittedItemsAsPlaces();
         }else if(location_ids != null  && !OriginContent.isIntentionallyEmpty()){
-            this.places = Util.readOriginsFromPreferencesAsPlaces(locationPreferences);
+            this.places = Util.readOriginsFromPreferencesAsPlaces(homePreferences);
             OriginContent.setPlacesAsComittedItems(this.places);
         }
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        SharedPreferences.Editor prefEditor = homePreferences.edit();
+        Util.savePlacesAsOriginsIntoPreferences(prefEditor, places);
+        prefEditor.apply();
     }
 
     @Nullable
@@ -164,15 +163,17 @@ public class HomeFragment extends Fragment
             latlnglist = OriginContent.getComittedItemAsLatLngs();
         }
         //Find Center
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        boolean unweighted_algorithm = mPreferences.getBoolean("ml_algo", false);
+        mainPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        boolean unweighted_algorithm = mainPreferences.getBoolean("ml_algo", false);
         LatLng centre = null;
         if (!unweighted_algorithm && latlnglist != null && latlnglist.size()>1 ){
             centerfinder = CenterFinder.getCartesianFinder();
         }else if(latlnglist != null && latlnglist.size()>1 ){
-            centerfinder = CenterFinder.getUnweightedFinder(mPreferences.getBoolean("ml_algo_overpower", false));
+            centerfinder = CenterFinder.getUnweightedFinder(mainPreferences.getBoolean("ml_algo_unlocksafety", false));
         }
-        centre = centerfinder.getCenter(latlnglist);
+        if (latlnglist != null){
+            centre = centerfinder.getCenter(latlnglist);
+        }
         if (centre != null){
             mMap.addMarker(new MarkerOptions().position(centre).title("Center")
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
@@ -250,29 +251,4 @@ public class HomeFragment extends Fragment
         // (the camera animates to the user's current position).
         return false;
     }
-
-    @Override
-    public void onPause(){
-        super.onPause();
-        updateMyPlace();
-    }
-
-    private Place.Builder PLACE_BUILDER;
-    //A bad idea - need to fix
-    @SuppressLint("MissingPermission")
-    public void updateMyPlace(){
-        PLACE_BUILDER = Place.builder();
-        FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this.getActivity());
-        fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this.getActivity(), new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                if (location != null) {
-                    PLACE_BUILDER.setName("Your Location");
-                    PLACE_BUILDER.setLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
-                    OriginContent.setMyPlace(PLACE_BUILDER.build());
-                }
-            }
-        });
-    }
-
 }

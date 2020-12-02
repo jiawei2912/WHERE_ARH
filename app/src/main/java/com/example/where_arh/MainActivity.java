@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_settings:
-                Intent intent = new Intent(MainActivity.this, PreviewActivity.class);
+                Intent intent = new Intent(MainActivity.this, SuggestedLocationsActivity.class);
                 startActivity(intent);
                 return true;
             default:

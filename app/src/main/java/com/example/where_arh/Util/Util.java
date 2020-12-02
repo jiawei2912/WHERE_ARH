@@ -6,9 +6,11 @@ import android.webkit.WebStorage;
 
 import com.example.where_arh.ui.origins.OriginContent;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -28,6 +30,21 @@ public final class Util {
         }
         prefEditor.putStringSet("location_ids" , location_ids);
     }
+
+    public static void savePlacesAsOriginsIntoPreferences(SharedPreferences.Editor prefEditor, List<Place> places){
+        if (places == null){
+            return;
+        }
+        List<OriginContent.OriginItem> items = new ArrayList<>();
+        int idx = 0;
+        for (Place place:places){
+            OriginContent.OriginItem originitem = new OriginContent.OriginItem(String.valueOf(idx), place.getName(), place.getLatLng());
+            items.add(originitem);
+            idx += 1;
+        }
+        saveOriginsIntoPreferences(prefEditor, items);
+    }
+
     public static List<Place> readOriginsFromPreferencesAsPlaces(SharedPreferences mPreferences){
         ArrayList<Place> places = new ArrayList<>();
         Set<String> location_ids = mPreferences.getStringSet("location_ids", null);
@@ -44,7 +61,7 @@ public final class Util {
         return places;
     }
 
-    //Machine Learning ALgorithm helper functions
+    //Machine Learning Algorithm helper functions
 
     public static double distanceBetweenLatLngs(LatLng l1, LatLng l2){
         double x_distance = l1.latitude - l2.latitude;
@@ -60,8 +77,23 @@ public final class Util {
         return total_distance/latlnglist.size();
     }
 
+    public static double getMedianDistance(List<LatLng> latlnlist, LatLng dest){
+        double[] distances = new double[latlnlist.size()];
+        for (int i = 0; i < latlnlist.size(); i++){
+            distances[i] = Math.pow(Util.distanceBetweenLatLngs(dest, latlnlist.get(i)),0.5);
+        }
+        Arrays.sort(distances);
+        if (distances.length%2 == 1){
+            int choice = (distances.length/2) + 1 - 1;
+            return distances[choice];
+        }else{
+            int choice1 = distances.length/2 - 1;
+            return (distances[choice1] + distances[choice1+1])/2;
+        }
+    }
+
     public static double getCost(List<LatLng> latlnglist, LatLng dest){
-        double average_distance = getAverageDistance(latlnglist, dest);
+        double average_distance = getMedianDistance(latlnglist, dest);
         double cost = 0;
         for(LatLng latlng:latlnglist){
             cost +=  Math.pow(Math.pow(Util.distanceBetweenLatLngs(dest, latlng),0.5) - average_distance, 2);

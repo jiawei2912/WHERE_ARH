@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,8 +55,8 @@ public class OriginsFragment extends Fragment {
     private ImageButton addOwnLocationButton;
 
     //Preferences
-    private SharedPreferences mPreferences;
-    private String sharedPrefFile = "com.example.where_arh.origins.locations_info";
+    private SharedPreferences originPreferences;
+    private String originPrefFile = "com.example.where_arh.origins.locations_info";
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -88,7 +87,7 @@ public class OriginsFragment extends Fragment {
     public void onPause() {
         super.onPause();
         List<OriginContent.OriginItem> originitems = OriginContent.getItems();
-        SharedPreferences.Editor prefEditor = mPreferences.edit();
+        SharedPreferences.Editor prefEditor = originPreferences.edit();
         Util.saveOriginsIntoPreferences(prefEditor, originitems);
         prefEditor.apply();
     }
@@ -96,7 +95,7 @@ public class OriginsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View nview = inflater.inflate(R.layout.fragment_origins_list, container, false);
-        View view = nview.findViewById(R.id.list);
+        View view = nview.findViewById(R.id.origin_list);
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
@@ -149,10 +148,10 @@ public class OriginsFragment extends Fragment {
         });
 
         //load saved origins
-        mPreferences = this.getActivity().getSharedPreferences(sharedPrefFile, this.getActivity().MODE_PRIVATE);
-        Set<String> location_ids = mPreferences.getStringSet("location_ids", null);
+        originPreferences = this.getActivity().getSharedPreferences(originPrefFile, this.getActivity().MODE_PRIVATE);
+        Set<String> location_ids = originPreferences.getStringSet("location_ids", null);
         if (location_ids != null){
-            List<Place> places = Util.readOriginsFromPreferencesAsPlaces(mPreferences);
+            List<Place> places = Util.readOriginsFromPreferencesAsPlaces(originPreferences);
             OriginContent.clearItems();
             for (Place place:places){
                 OriginContent.addPlaceAsItem(place);
@@ -193,7 +192,6 @@ public class OriginsFragment extends Fragment {
     }
 
     private Place.Builder PLACE_BUILDER;
-    //A bad idea - need to fix
     @SuppressLint("MissingPermission")
     public void updateMyPlace(){
         PLACE_BUILDER = Place.builder();

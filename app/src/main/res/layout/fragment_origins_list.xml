@@ -21,7 +21,7 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list"
+        android:id="@+id/origin_list"
         android:name="com.example.where_arh.OriginsFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
