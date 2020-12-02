@@ -193,7 +193,7 @@ public class HomeFragment extends Fragment
                     if(!marker.getTitle().equals("Center")){
 
                     }else{
-                        if(Integer.parseInt(android.os.Build.VERSION.SDK) > 29){
+                        if(Integer.parseInt(android.os.Build.VERSION.SDK) > 30){
                             Toast errtoast = Toast.makeText(getContext(), "API Level 30 not yet supported.", Toast.LENGTH_SHORT);
                             //NearbySearch is currently not compatible with SDK version 30
                         }else{
