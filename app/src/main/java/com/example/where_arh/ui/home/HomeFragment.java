@@ -3,6 +3,7 @@ package com.example.where_arh.ui.home;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -66,6 +67,7 @@ public class HomeFragment extends Fragment
     private List<Place> places;
     private FloatingActionButton to_origins_fab;
     private NavController navcontroller;
+    private CenterFinder centerfinder;
 
     @Override
     public void onCreate(Bundle SavedInstance) {
@@ -166,10 +168,11 @@ public class HomeFragment extends Fragment
         boolean unweighted_algorithm = mPreferences.getBoolean("ml_algo", false);
         LatLng centre = null;
         if (!unweighted_algorithm && latlnglist != null && latlnglist.size()>1 ){
-            centre = CenterFinder.getCartesianCenter(latlnglist);
+            centerfinder = CenterFinder.getCartesianFinder();
         }else if(latlnglist != null && latlnglist.size()>1 ){
-            centre = CenterFinder.getUnweightedCenter(latlnglist, mPreferences.getBoolean("ml_algo_unlocksafety", false));
+            centerfinder = CenterFinder.getUnweightedFinder(mPreferences.getBoolean("ml_algo_overpower", false));
         }
+        centre = centerfinder.getCenter(latlnglist);
         if (centre != null){
             mMap.addMarker(new MarkerOptions().position(centre).title("Center")
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
@@ -199,8 +202,8 @@ public class HomeFragment extends Fragment
                         }else{
                             PlacesSearchResponse psr = NearbySearch.run(finalCentre, 1000, getResources().getString(R.string.google_maps_key));
                             PlacesSearchResult[] results = psr.results;
-                            Log.d("TAG", results[0].toString());
-                            Log.d("TAG", finalCentre.toString());
+                            Intent to_suggested_locations = new Intent();
+                            to_suggested_locations.putExtra("psr", psr);
                         }
                     }
 
