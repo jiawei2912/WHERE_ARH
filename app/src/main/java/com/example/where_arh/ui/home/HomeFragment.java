@@ -85,6 +85,7 @@ public class HomeFragment extends Fragment
         SharedPreferences.Editor prefEditor = homePreferences.edit();
         Util.savePlacesAsOriginsIntoPreferences(prefEditor, places);
         prefEditor.apply();
+        updateMyPlace();
     }
 
     @Nullable
@@ -250,5 +251,22 @@ public class HomeFragment extends Fragment
         // Return false so that we don't consume the event and the default behavior still occurs
         // (the camera animates to the user's current position).
         return false;
+    }
+
+    private Place.Builder PLACE_BUILDER;
+    @SuppressLint("MissingPermission")
+    public void updateMyPlace(){
+        PLACE_BUILDER = Place.builder();
+        FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this.getActivity());
+        fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this.getActivity(), new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if (location != null) {
+                    PLACE_BUILDER.setName("Your Location");
+                    PLACE_BUILDER.setLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
+                    OriginContent.setMyPlace(PLACE_BUILDER.build());
+                }
+            }
+        });
     }
 }
