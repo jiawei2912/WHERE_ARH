@@ -6,7 +6,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
+import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -191,11 +193,15 @@ public class HomeFragment extends Fragment
                     if(!marker.getTitle().equals("Center")){
 
                     }else{
-                        PlacesSearchResponse psr = NearbySearch.run(finalCentre, 1000, getResources().getString(R.string.google_maps_key));
-                        PlacesSearchResult[] results = psr.results;
-                        Log.d("TAG", results[0].toString());
-                        Log.d("TAG", finalCentre.toString());
-
+                        if(Integer.parseInt(android.os.Build.VERSION.SDK) > 29){
+                            Toast errtoast = Toast.makeText(getContext(), "API Level 30 not yet supported.", Toast.LENGTH_SHORT);
+                            //NearbySearch is currently not compatible with SDK version 30
+                        }else{
+                            PlacesSearchResponse psr = NearbySearch.run(finalCentre, 1000, getResources().getString(R.string.google_maps_key));
+                            PlacesSearchResult[] results = psr.results;
+                            Log.d("TAG", results[0].toString());
+                            Log.d("TAG", finalCentre.toString());
+                        }
                     }
 
                     return false;
