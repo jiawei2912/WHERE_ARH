@@ -25,7 +25,7 @@
 
         <SwitchPreferenceCompat
             app:dependency="ml_algo"
-            app:key="ml_algo_attachment"
+            app:key="ml_algo_unlocksafety"
             app:summary="@string/attachment_summary"
             app:title="@string/attachment_title" />
 
