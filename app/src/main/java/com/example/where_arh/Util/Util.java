@@ -66,13 +66,13 @@ public final class Util {
     public static double distanceBetweenLatLngs(LatLng l1, LatLng l2){
         double x_distance = l1.latitude - l2.latitude;
         double y_distance = l1.longitude - l2.longitude;
-        return Math.pow(Math.pow(x_distance,2) + Math.pow(y_distance,2), 2);
+        return Math.pow(Math.pow(x_distance,2) + Math.pow(y_distance,2), 0.5);
     }
 
     public static double getAverageDistance(List<LatLng> latlnglist, LatLng dest){
         double total_distance = 0;
         for(LatLng latLng:latlnglist){
-            total_distance += Math.pow(Util.distanceBetweenLatLngs(dest, latLng),0.5);
+            total_distance += Util.distanceBetweenLatLngs(dest, latLng);
         }
         return total_distance/latlnglist.size();
     }
@@ -80,7 +80,7 @@ public final class Util {
     public static double getMedianDistance(List<LatLng> latlnlist, LatLng dest){
         double[] distances = new double[latlnlist.size()];
         for (int i = 0; i < latlnlist.size(); i++){
-            distances[i] = Math.pow(Util.distanceBetweenLatLngs(dest, latlnlist.get(i)),0.5);
+            distances[i] = Util.distanceBetweenLatLngs(dest, latlnlist.get(i));
         }
         Arrays.sort(distances);
         if (distances.length%2 == 1){
@@ -93,20 +93,20 @@ public final class Util {
     }
 
     public static double getCost(List<LatLng> latlnglist, LatLng dest){
-        double average_distance = getMedianDistance(latlnglist, dest);
+        double average_distance = getAverageDistance(latlnglist, dest);
         double cost = 0;
         for(LatLng latlng:latlnglist){
-            cost +=  Math.pow(Math.pow(Util.distanceBetweenLatLngs(dest, latlng),0.5) - average_distance, 2);
+            cost +=  Math.pow(Util.distanceBetweenLatLngs(dest, latlng) - average_distance, 2);
         }
         return cost;
     }
 
     public static LatLng getWorstCostLatLng(List<LatLng> latlnglist, LatLng dest){
-        double average_distance = getAverageDistance(latlnglist, dest);
+        double average_distance = getMedianDistance(latlnglist, dest);
         double worst_cost = 0;
         LatLng worst_latlng = dest;
         for(LatLng latlng:latlnglist){
-            double i_cost =  Math.pow(Math.pow(Util.distanceBetweenLatLngs(dest, latlng),0.5) - average_distance, 2);
+            double i_cost =  Math.pow(Util.distanceBetweenLatLngs(dest, latlng) - average_distance, 2);
             if (i_cost > worst_cost){
                 worst_latlng = latlng;
                 worst_cost = i_cost;
