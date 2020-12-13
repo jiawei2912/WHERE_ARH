@@ -1,5 +1,4 @@
 # WHERE_ARH
 Poor Sobs finding Poor Sobs
-## JIAWEI 
-Implemented Machine Learning in 1 hour here in our APP.
-### PRAY TO OUR GOD 
+# HELLO PROFS
+Please follow the instructions in our Edimension submission text to add your own API key to run our APP. 
